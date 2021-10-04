@@ -4,12 +4,105 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <title>Vanilla JavaScript App</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script type="text/javascript" src="script.js"></script>
+    <title>Vanilla JavaScript App Test</title>
   </head>
 
   <body>
     <main>
-      <h1>Vanilla JavaScript App Test</h1>
+      <div class="container">
+        
+        <div class="row">
+          <div class="col ">
+            <h1 class="display-4 text-left">Arbetslog</h1>
+          </div>
+          <div id="log-in-container" class="col  d-none">
+            <div class="row">
+              <div class="col  d-flex justify-content-end">
+
+                <a href="/.auth/login/providers/github" class="btn btn-primary"
+                  >Logga in</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <div id="log-out-container" class="col ">
+            <div class="row">
+              <div class="col  d-flex justify-content-end">
+
+                <a href="/.auth/logout/" class="btn btn-danger"
+                  >Logga ut</a
+                >
+              </div>
+            </div>
+            <div class="row">
+              <div class="col d-flex justify-content-end">
+                <small id="logged-in-as-notification" class="form-text text-muted">Inloggad som <span id="logged-in-as-user"></span></small>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="task-container" class="container d-none">
+        <div class="row">
+          <div class="col">
+            <form id="task-form">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Lägg till ny uppgift</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="task-name"
+                  placeholder="Uppgiftsnamn"
+                />
+              </div>
+              <button class="btn btn-primary" onclick="submitTask()">
+                Spara uppgift
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div id="no-task-container" class="container">
+        <small id="no-task-message" class="form-text text-muted">Det finns inga uppgifter</small>
+      </div>
+      <div id="task-list-container" class="container d-none">
+        <table id="task-table" class="table">
+          <thead>
+            <tr>
+              <th scope="col">Uppgiftsnamn</th>
+              <th scope="col">Tid</th>
+            </tr>
+          </thead>
+          <tbody id="task-list-body">
+          </tbody>
+        </table>
+
+      </div>
     </main>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
