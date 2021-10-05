@@ -44,9 +44,10 @@ namespace MxChip.FetchTasksApi
             foreach (var task in tasks)
             {
                 task.MinutesSpent = task.EndDate - task.StartDate;
+                task.StartDate = task.StartDate.AddHours(2);
             }
 
-            return new OkObjectResult(tasks);
+            return new OkObjectResult(tasks.OrderBy(task => task.StartDate));
         }
     }
 }

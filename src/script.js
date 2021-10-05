@@ -74,8 +74,10 @@ function printTasks(tasks) {
       var row = table.insertRow(0);
       var cell1 = row.insertCell(0);
       var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
       cell1.innerHTML = task.name;
-      cell2.innerHTML = task.minutesSpent;
+      cell2.innerHTML = task.startDate;
+      cell3.innerHTML = task.minutesSpent;
     }
   } else {
     document.getElementById('task-list-container ').classList.add('d-none');
@@ -88,7 +90,7 @@ function submitTask() {
   var taskForm = document.getElementById('task-form');
   taskForm.onsubmit = function (e) {
     e.preventDefault();
-    window.location.reload();
+    // window.location.reload();
   };
 
   console.log(
@@ -108,6 +110,7 @@ function submitTask() {
   })
     .then(function (response) {
       if (response.ok) {
+        console.log("response :: ", response);
         return response.json();
       }
       return Promise.reject(response);

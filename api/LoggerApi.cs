@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.Cosmos.Table;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace MxChip.LoggerApi
 {
@@ -45,26 +46,27 @@ namespace MxChip.LoggerApi
             TableQuery<TableData> query = table.CreateQuery<TableData>();
             query.TakeCount = 2;
 
-            var logRows = (await table.ExecuteQuerySegmentedAsync(query, null)).ToList();
+            var telemetryRows = (await table.ExecuteQuerySegmentedAsync(query, null)).ToList();
 
-            if (logRows.Any())
+            if (telemetryRows.Any())
             {
 
                 for (var i = 0; i < 2; i++)
                 {
-                    if(logRows[i].Timer == "true") 
+                    if(telemetryRows[i].Timer == "true") 
                     {
-                        taskLogItem.StartDate = logRows[i].Timestamp;
+                        taskLogItem.StartDate = telemetryRows[i].Timestamp;
                     } 
                     else 
                     {
-                        taskLogItem.EndDate = logRows[i].Timestamp;
+                        taskLogItem.EndDate = telemetryRows[i].Timestamp;
                     } 
                 }
 
                 taskLogItem.PartitionKey = "uxfu7gvhoe";
-                taskLogItem.RowKey = $"{(DateTimeOffset.MaxValue.Ticks - logRows[0].Timestamp.Ticks):d10}-{Guid.NewGuid():N}";
+                taskLogItem.RowKey = $"{(DateTimeOffset.MaxValue.Ticks - telemetryRows[0].Timestamp.Ticks):d10}-{Guid.NewGuid():N}";
 
+                RemoveEntityByRowKey(telemetryRows, table);
                 return taskLogItem;
             }
             else 
@@ -72,5 +74,29 @@ namespace MxChip.LoggerApi
                 return null;
             }
         }
+
+        public static void RemoveEntityByRowKey(List<TableData> telemetry, CloudTable table)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                try
+                {
+                    var entity = new TableData 
+                    {
+                        PartitionKey = "uxfu7gvhoe",
+                        RowKey = telemetry[i].RowKey,
+                        ETag = "*"
+                    };
+
+                    TableOperation deleteOperation = TableOperation.Delete(entity);
+                    table.Execute(deleteOperation);
+                }
+                catch (Exception ex)
+                {
+                    System.Console.WriteLine(ex);
+                    throw;
+                }
+            }
+        } 
     }
 }
