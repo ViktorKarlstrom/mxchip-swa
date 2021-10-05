@@ -90,7 +90,6 @@ function submitTask() {
   var taskForm = document.getElementById('task-form');
   taskForm.onsubmit = function (e) {
     e.preventDefault();
-    // window.location.reload();
   };
 
   console.log(
@@ -111,14 +110,24 @@ function submitTask() {
     .then(function (response) {
       if (response.ok) {
         console.log("response :: ", response);
+        document.getElementById('submit-task-error').classList.add('d-none');
+      window.location.reload();
+
         return response.json();
+      } 
+      if (response.status == 400) {
+        
+        document.getElementById('submit-task-error').classList.remove('d-none');
       }
       return Promise.reject(response);
     })
     .then(function (data) {
+      
+
       console.log(data);
     })
     .catch(function (error) {
       console.warn('Something went wrong.', error);
     });
+
 }

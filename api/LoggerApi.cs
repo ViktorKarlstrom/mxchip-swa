@@ -31,10 +31,10 @@ namespace MxChip.LoggerApi
     public static class LoggerApi
     {
         [FunctionName("LoggerApi")]
-        [return: Table("Log", "uxfu7gvhoe", Connection = "LogDatabaseConnection")]
-        public static async Task<TaskLogItem> Run(
+        public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            [Table("Telemetry", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable table,
+            [Table("Telemetry", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable telemetryTable,
+            [Table("Log", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable logTable,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -43,10 +43,10 @@ namespace MxChip.LoggerApi
 
             TaskLogItem taskLogItem = JsonConvert.DeserializeObject<TaskLogItem>(content);
 
-            TableQuery<TableData> query = table.CreateQuery<TableData>();
+            TableQuery<TableData> query = telemetryTable.CreateQuery<TableData>();
             query.TakeCount = 2;
 
-            var telemetryRows = (await table.ExecuteQuerySegmentedAsync(query, null)).ToList();
+            var telemetryRows = (await telemetryTable.ExecuteQuerySegmentedAsync(query, null)).ToList();
 
             if (telemetryRows.Any())
             {
@@ -66,12 +66,15 @@ namespace MxChip.LoggerApi
                 taskLogItem.PartitionKey = "uxfu7gvhoe";
                 taskLogItem.RowKey = $"{(DateTimeOffset.MaxValue.Ticks - telemetryRows[0].Timestamp.Ticks):d10}-{Guid.NewGuid():N}";
 
-                RemoveEntityByRowKey(telemetryRows, table);
-                return taskLogItem;
+                RemoveEntityByRowKey(telemetryRows, telemetryTable);
+
+                TableOperation insertOperation = TableOperation.InsertOrMerge(taskLogItem);  
+                TableResult result = await logTable.ExecuteAsync(insertOperation);
+                return new OkResult();
             }
             else 
             {
-                return null;
+                return new BadRequestResult();
             }
         }
 
