@@ -6,13 +6,14 @@ html, body {
   margin: 0;
   border: 0;
   padding: 0;
-  background-color: #fff;
+  background-color:#f8f9fa;
 }
 
 main {
   margin: auto;
   width: 50%;
   padding: 20px;
+  
 }
 
 main > h1 {

@@ -16,10 +16,9 @@ namespace MxChip.LoggerApi
 
     public class TableData : TableEntity
     {
-        public string Timer { get; set; }
-        
-        
+        public string Timer { get; set; }    
     }
+    
     public class TaskLogItem : TableEntity
     {
         public string Owner { get; set; }
