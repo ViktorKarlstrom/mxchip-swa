@@ -18,7 +18,7 @@ namespace MxChip.LoggerApi
     {
         public string Timer { get; set; }    
     }
-    
+
     public class TaskLogItem : TableEntity
     {
         public string Owner { get; set; }
@@ -49,7 +49,6 @@ namespace MxChip.LoggerApi
 
             if (telemetryRows.Any())
             {
-
                 for (var i = 0; i < 2; i++)
                 {
                     if(telemetryRows[i].Timer == "true") 
@@ -64,11 +63,18 @@ namespace MxChip.LoggerApi
 
                 taskLogItem.PartitionKey = "uxfu7gvhoe";
                 taskLogItem.RowKey = $"{(DateTimeOffset.MaxValue.Ticks - telemetryRows[0].Timestamp.Ticks):d10}-{Guid.NewGuid():N}";
+                
+                try
+                {
+                    RemoveEntityByRowKey(telemetryRows, telemetryTable);
 
-                RemoveEntityByRowKey(telemetryRows, telemetryTable);
-
-                TableOperation insertOperation = TableOperation.InsertOrMerge(taskLogItem);  
-                TableResult result = await logTable.ExecuteAsync(insertOperation);
+                    TableOperation insertOperation = TableOperation.InsertOrMerge(taskLogItem);  
+                    TableResult result = await logTable.ExecuteAsync(insertOperation);
+                }
+                catch (System.Exception)
+                {
+                    throw;
+                }
                 return new OkResult();
             }
             else 

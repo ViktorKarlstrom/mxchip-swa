@@ -36,7 +36,7 @@ namespace MxChip.FetchTasksApi
             var content = await new StreamReader(req.Body).ReadToEndAsync();
 
             InputOwner inputOwner = JsonConvert.DeserializeObject<InputOwner>(content);
-
+            
             TableQuery<OutputData> query = table.CreateQuery<OutputData>();
    
             var tasks = (await table.ExecuteQuerySegmentedAsync(query, null)).ToList().Where(user => user.Owner == inputOwner.owner);
