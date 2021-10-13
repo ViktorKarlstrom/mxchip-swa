@@ -20,8 +20,8 @@ namespace MxChip.LoggerApi
         [FunctionName("LoggerApi")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            [Table("Telemetry", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable telemetryTable,
-            [Table("Log", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable logTable,
+            [Table("TimerLog", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable timerTable,
+            [Table("TaskLog", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable taskTable,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -30,34 +30,34 @@ namespace MxChip.LoggerApi
 
             TaskLogItem taskLogItem = JsonConvert.DeserializeObject<TaskLogItem>(content);
 
-            TableQuery<TableData> query = telemetryTable.CreateQuery<TableData>();
+            TableQuery<TableData> query = timerTable.CreateQuery<TableData>();
             query.TakeCount = 2;
 
-            var telemetryRows = (await telemetryTable.ExecuteQuerySegmentedAsync(query, null)).ToList();
+            var timerRows = (await timerTable.ExecuteQuerySegmentedAsync(query, null)).ToList();
 
-            if (telemetryRows.Any())
+            if (timerRows.Any())
             {
                 for (var i = 0; i < 2; i++)
                 {
-                    if(telemetryRows[i].Timer == "true") 
+                    if(timerRows[i].Timer == "true") 
                     {
-                        taskLogItem.StartDate = telemetryRows[i].Timestamp;
+                        taskLogItem.StartDate = timerRows[i].Timestamp;
                     } 
                     else 
                     {
-                        taskLogItem.EndDate = telemetryRows[i].Timestamp;
+                        taskLogItem.EndDate = timerRows[i].Timestamp;
                     } 
                 }
 
                 taskLogItem.PartitionKey = "uxfu7gvhoe";
-                taskLogItem.RowKey = $"{(DateTimeOffset.MaxValue.Ticks - telemetryRows[0].Timestamp.Ticks):d10}-{Guid.NewGuid():N}";
+                taskLogItem.RowKey = $"{(DateTimeOffset.MaxValue.Ticks - timerRows[0].Timestamp.Ticks):d10}-{Guid.NewGuid():N}";
                 
                 try
                 {
-                    RemoveEntityByRowKey(telemetryRows, telemetryTable);
+                    RemoveEntityByRowKey(timerRows, timerTable);
 
                     TableOperation insertOperation = TableOperation.InsertOrMerge(taskLogItem);  
-                    TableResult result = await logTable.ExecuteAsync(insertOperation);
+                    TableResult result = await taskTable.ExecuteAsync(insertOperation);
                 }
                 catch (System.Exception)
                 {

@@ -17,7 +17,7 @@ namespace MxChip.FetchTasksApi
         [FunctionName("FetchTasksApi")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            [Table("Log", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable table,
+            [Table("TaskLog", "uxfu7gvhoe", Connection = "LogDatabaseConnection")] CloudTable table,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
