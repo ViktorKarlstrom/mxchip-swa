@@ -10,22 +10,10 @@ using Newtonsoft.Json;
 using Microsoft.Azure.Cosmos.Table;
 using System.Linq;
 using System.Collections.Generic;
+using MxChip.Api.Models;
 
 namespace MxChip.LoggerApi
 {
-
-    public class TableData : TableEntity
-    {
-        public string Timer { get; set; }    
-    }
-
-    public class TaskLogItem : TableEntity
-    {
-        public string Owner { get; set; }
-        public string Name { get; set; }
-        public DateTimeOffset StartDate { get; set; }        
-        public DateTimeOffset EndDate { get; set; }
-    }
 
     public static class LoggerApi
     {

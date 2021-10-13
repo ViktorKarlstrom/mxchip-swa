@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -9,20 +8,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.Cosmos.Table;
 using System.Linq;
-using MxChip.LoggerApi;
+using MxChip.Api.Models;
 
 namespace MxChip.FetchTasksApi
 {
-
-    public class InputOwner
-    {
-        public string owner { get; set; }
-    }
-
-    public class OutputData : TaskLogItem
-    {
-        public TimeSpan MinutesSpent { get; set; }        
-    }
     public static class FetchTasksApi
     {
         [FunctionName("FetchTasksApi")]
